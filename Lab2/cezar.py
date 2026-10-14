@@ -41,8 +41,8 @@ def analizuj_szyfr_cezara():
     for i, (ocena, k, _, podglad) in enumerate(kandydaci[:5]):
         print(f"Pozycja {i+1} | Klucz k = {k:3d} | Ocena: {ocena:6.2%} | Podgląd: {podglad}")
 
-    # 5. Wybór końcowy i zapis do pliku cezar.txt
-    # (Program domyślnie wybiera kandydata z pozycji 1, w razie potrzeby można zmienić indeks)
+    # Program wybiera kandydata z pozycji 2 [Dla naszego przykładu był poprawny], 
+    # w razie potrzeby można zmienić indeks, albo dodać wybór przez użytkownika
     najlepszy = kandydaci[1]
     wybrany_klucz = najlepszy[1]
     dane_odszyfrowane = najlepszy[2]
