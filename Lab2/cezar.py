@@ -1,8 +1,8 @@
 import os
+import sys
 
-def analizuj_szyfr_cezara():
-    sciezka_wejsciowa = "zadanie\\cezar.bin"
-    
+
+def analizuj_szyfr_cezara(sciezka_wejsciowa):
     try:
         with open(sciezka_wejsciowa, "rb") as file:
             dane_zaszyfrowane = file.read()
@@ -19,42 +19,38 @@ def analizuj_szyfr_cezara():
     kandydaci = []
 
     for k in range(256):
-        odszyfrowane = bytes([(b - k) % 256 for b in dane_zaszyfrowane])
-        
+        odszyfrowane = bytes([(c - k) % 256 for c in dane_zaszyfrowane])
+
         liczba_tekstowych = sum(1 for b in odszyfrowane if b in poprawne_bajty)
         ocena = liczba_tekstowych / rozmiar
-        
-        podglad = ""
-        for b in odszyfrowane[:45]:
-            if 32 <= b <= 126:
-                podglad += chr(b)
-            elif b in (9, 10, 13):
-                podglad += " "  # Zamiana białych znaków na spację w podglądzie
-            else:
-                podglad += "•"  # Reprezentacja znaku niedrukowalnego
-                
-        kandydaci.append((ocena, k, odszyfrowane, podglad))
 
+        kandydaci.append((ocena, k, odszyfrowane))
+
+    # Sortowanie malejąco po ocenie, remisy rosnąco według k
     kandydaci.sort(key=lambda x: (-x[0], x[1]))
 
     print("=== PIĘCIU NAJLEPSZYCH KANDYDATÓW ===")
-    for i, (ocena, k, _, podglad) in enumerate(kandydaci[:5]):
-        print(f"Pozycja {i+1} | Klucz k = {k:3d} | Ocena: {ocena:6.2%} | Podgląd: {podglad}")
+    for i, (ocena, k, odszyfrowane) in enumerate(kandydaci[:5]):
+        # repr(), bo odszyfrowanie może zawierać znaki sterujące
+        print(f"{i+1}. k = {k:3d} | Ocena: {ocena:7.2%} | Początek: {repr(odszyfrowane[:50])}")
 
-    # Program wybiera kandydata z pozycji 2 [Dla naszego przykładu był poprawny], 
-    # w razie potrzeby można zmienić indeks, albo dodać wybór przez użytkownika
-    najlepszy = kandydaci[1]
-    wybrany_klucz = najlepszy[1]
-    dane_odszyfrowane = najlepszy[2]
-    
+    # Wybór ręczny kandydata spośród pięciu najlepszych
+    wybor = input("\nPodaj numer kandydata (1-5) dającego sensowny tekst: ").strip()
+    while wybor not in {"1", "2", "3", "4", "5"}:
+        wybor = input("Niepoprawny numer, podaj 1-5: ").strip()
+
+    _, wybrany_klucz, dane_odszyfrowane = kandydaci[int(wybor) - 1]
+
     os.makedirs("generated", exist_ok=True)
-    sciezka_wyjsciowa = "generated\\cezar.txt"
-    
-    # Zapis odszyfrowanego tekstu
-    with open(sciezka_wyjsciowa, "w", encoding="utf-8", errors="replace") as out_file:
-        out_file.write(dane_odszyfrowane.decode("utf-8", errors="replace"))
-        
+    sciezka_wyjsciowa = os.path.join("generated", "cezar.txt")
+
+    # Zapis binarny - bez zmieniania odzyskanych bajtów
+    with open(sciezka_wyjsciowa, "wb") as out_file:
+        out_file.write(dane_odszyfrowane)
+
     print(f"\n[SUKCES] Zapisano pełny odszyfrowany tekst dla klucza k={wybrany_klucz} do pliku: {sciezka_wyjsciowa}")
 
+
 if __name__ == "__main__":
-    analizuj_szyfr_cezara()
+    sciezka = sys.argv[1] if len(sys.argv) > 1 else os.path.join("zadanie", "cezar.bin")
+    analizuj_szyfr_cezara(sciezka)
