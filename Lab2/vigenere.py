@@ -1,75 +1,86 @@
 import os
+import sys
 
-def szyfruj_bajty(dane: bytes, klucz_str: str) -> bytes:
-    """Uniwersalna funkcja do szyfrowania Vigenere'a na poziomie bajtów (modulo 256)."""
-    klucz_bytes = klucz_str.encode("utf-8")
-    m = len(klucz_bytes)
-    # Szyfrowanie to dodawanie (+) klucza do tekstu jawnego
-    return bytes(
-        [(b + klucz_bytes[index % m]) % 256 for index, b in enumerate(dane)]
-    )
+
+def szyfruj_bajty(dane: bytes, klucz: bytes) -> bytes:
+    """Szyfrowanie Vigenere'a na poziomie bajtów: c[i] = (p[i] + K[i % m]) % 256."""
+    if len(klucz) == 0:
+        raise ValueError("Klucz nie może być pusty")
+    m = len(klucz)
+    return bytes([(b + klucz[index % m]) % 256 for index, b in enumerate(dane)])
+
+
+def odszyfruj_bajty(dane: bytes, klucz: bytes) -> bytes:
+    """Odszyfrowanie Vigenere'a: p[i] = (c[i] - K[i % m]) % 256."""
+    if len(klucz) == 0:
+        raise ValueError("Klucz nie może być pusty")
+    m = len(klucz)
+    return bytes([(b - klucz[index % m]) % 256 for index, b in enumerate(dane)])
 
 
 def sformatuj_hex_3x5(kryptogram: bytes) -> str:
-    """Pomocnicza funkcja dzieląca 15-bajtowy kryptogram na 3 części po 5 bajtów."""
-    hex_str = kryptogram.hex()
-    # Dzielimy ciąg hex (30 znaków) na fragmenty po 10 znaków hex (5 bajtów)
-    f1 = hex_str[0:10]
-    f2 = hex_str[10:20]
-    f3 = hex_str[20:30]
-    return f"{f1} {f2} {f3}"
+    """Dzieli 15-bajtowy kryptogram na 3 fragmenty po 5 bajtów (szesnastkowo)."""
+    return " ".join(kryptogram[i:i + 5].hex() for i in range(0, len(kryptogram), 5))
 
 
-def zadanie_drugie():
-    """Realizuje dodatkową część zadania z ciągiem BRAMABRAMABRAMA."""
-    tekst_jawny = "BRAMABRAMABRAMA".encode("ascii")
+def testy():
+    """Testy odwracalności: puste dane oraz dane zawierające bajty 0 i 255."""
+    print("\n--- TESTY ---")
+    klucz = b"ZAMEK"
+    przypadki = {
+        "puste dane": b"",
+        "bajty 0 i 255": bytes([0, 255, 0, 255, 128, 1, 254]),
+        "wszystkie bajty 0-255": bytes(range(256)),
+    }
+    for nazwa, dane in przypadki.items():
+        zaszyfrowane = szyfruj_bajty(dane, klucz)
+        wynik = odszyfruj_bajty(zaszyfrowane, klucz) == dane
+        print(f"Test '{nazwa}': {'OK' if wynik else 'BŁĄD'} | szyfrogram: {repr(zaszyfrowane[:16])}")
 
-    print("\n--- REALIZACJA DODATKOWEGO ZADANIA ---")
 
-    # 1. Pierwsze szyfrowanie kluczem SZYFR
-    kryptogram1 = szyfruj_bajty(tekst_jawny, "SZYFR")
-    print(f"Kryptogram 1 (klucz SZYFR): {sformatuj_hex_3x5(kryptogram1)}")
+def zadanie_brama():
+    """Zadanie 2.2 - szyfrowanie BRAMABRAMABRAMA kluczami SZYFR i KOD."""
+    tekst_jawny = b"BRAMABRAMABRAMA"
 
-    # 2. Drugie szyfrowanie pierwszego kryptogramu kluczem KOD
-    kryptogram2 = szyfruj_bajty(kryptogram1, "KOD")
-    print(f"Kryptogram 2 (klucz KOD):   {sformatuj_hex_3x5(kryptogram2)}")
-    print("-" * 38)
+    print("\n--- BRAMABRAMABRAMA ---")
+    for klucz in (b"SZYFR", b"KOD"):
+        kryptogram = szyfruj_bajty(tekst_jawny, klucz)
+        print(f"Klucz {klucz.decode('ascii'):5}: {sformatuj_hex_3x5(kryptogram)}")
 
 
-def szyfrowanie_vigenera():
-    key = "Zamek"
-    sciezka_wejsciowa = os.path.join("zadanie", "tekst_pl.txt")
+def szyfrowanie_vigenera(sciezka_wejsciowa):
+    key = b"ZAMEK"
 
     try:
         with open(sciezka_wejsciowa, "rb") as file:
             dane_wejsciowe = file.read()
     except FileNotFoundError:
-        print(
-            f"Błąd: Nie znaleziono pliku wejściowego w ścieżce: {sciezka_wejsciowa}"
-        )
+        print(f"Błąd: Nie znaleziono pliku wejściowego w ścieżce: {sciezka_wejsciowa}")
         return
 
-    rozmiar = len(dane_wejsciowe)
-    if rozmiar == 0:
-        print("Błąd: Plik jest pusty.")
-        return
-
-    # Szyfrowanie pliku za pomocą wspólnej funkcji
     zaszyfrowany_text = szyfruj_bajty(dane_wejsciowe, key)
 
     os.makedirs("generated", exist_ok=True)
     sciezka_wyjsciowa = os.path.join("generated", "vigenere.bin")
 
-    # Zapis zaszyfrowanego tekstu
     with open(sciezka_wyjsciowa, "wb") as out_file:
         out_file.write(zaszyfrowany_text)
 
-    print(
-        f"\n[SUKCES] Zapisano pełny zaszyfrowany tekst dla klucza k={key} do pliku: {sciezka_wyjsciowa}"
+    print(f"[SUKCES] Zapisano zaszyfrowany plik (klucz {key.decode('ascii')}): {sciezka_wyjsciowa}")
+    print(f"Początek szyfrogramu: {repr(zaszyfrowany_text[:50])}")
+
+    # Odszyfrowanie zapisanego pliku i porównanie ze źródłem bajt po bajcie
+    with open(sciezka_wyjsciowa, "rb") as file:
+        odszyfrowane = odszyfruj_bajty(file.read(), key)
+
+    zgodne = len(odszyfrowane) == len(dane_wejsciowe) and all(
+        a == b for a, b in zip(odszyfrowane, dane_wejsciowe)
     )
+    print(f"Zgodność odszyfrowania ze źródłem ({len(dane_wejsciowe)} B): {'OK' if zgodne else 'BŁĄD'}")
 
 
 if __name__ == "__main__":
-    szyfrowanie_vigenera()
-
-    zadanie_drugie()
+    sciezka = sys.argv[1] if len(sys.argv) > 1 else os.path.join("zadanie", "tekst_pl.txt")
+    szyfrowanie_vigenera(sciezka)
+    testy()
+    zadanie_brama()
