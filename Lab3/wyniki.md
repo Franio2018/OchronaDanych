@@ -1,8 +1,5 @@
 # Laboratorium 3 — Szyfrowanie blokowe — raport
 
-Imię i nazwisko: **[UZUPEŁNIJ]** · Nr indeksu: **[UZUPEŁNIJ]** · Język: **Python 3.12** (biblioteka `cryptography`)
-Repozytorium: **[LINK DO GITHUB]** · Commit: **[ID COMMITU]**
-
 ## Zadanie 1 — ECB i CBC (`ecb_cbc.py`)
 
 Wejście `0123456789ABCDEF` × 4 (64 B), klucz `000102030405060708090a0b0c0d0e0f`, bez dopełnienia.
