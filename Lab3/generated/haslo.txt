@@ -1,0 +1,14 @@
+Hasło testowe: Testowe-Haslo-2026
+PBKDF2-HMAC-SHA256, 200000 iteracji, klucz 32 B, sól 16 B
+
+Test 'puste dane': dane 0 B, kryptogram 16 B (oczekiwano 16 B), bajty zgodne: True -> OK
+Test '16 B ASCII': dane 16 B, kryptogram 32 B (oczekiwano 32 B), bajty zgodne: True -> OK
+Test 'wiadomosc.txt': dane 247 B, kryptogram 256 B (oczekiwano 256 B), bajty zgodne: True -> OK
+
+Dwa szyfrowania wiadomosc.txt tym samym hasłem:
+  sól 1: df5459d90cf67aa74950b8d5eaed7281  IV 1: a6f3f7f0a454e393c23c08cfdde86f68
+  sól 2: 456f5a03148a0f072c2467a19abdd1e2  IV 2: 88308bfd87775ab5769102ef2f71218a
+  kryptogram 1 (początek): 24c26e96e8405febf87c69352f42e871943527aecc8763e6cb79804b6c336807
+  kryptogram 2 (początek): e6f44f9d3a619f656ee97b641adbb152fe471726064e8138411b9902c77c8e63
+  kryptogramy równe: False
+  oba odszyfrowują się poprawnie: True

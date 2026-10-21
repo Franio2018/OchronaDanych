@@ -1,0 +1,13 @@
+Sprawdzono 36 kluczy, próbka 4096 B
+Top 5 kandydatów (rosnąco wg H):
+  1. 'm'  H = 4.4536
+  2. 'b'  H = 7.9472
+  3. 'x'  H = 7.9490
+  4. 'o'  H = 7.9493
+  5. '2'  H = 7.9502
+
+Wybrany klucz: 'm' x 16
+Długość tekstu po usunięciu PKCS#7: 13317 B
+Udział znaków drukowalnych: 100.00%
+Pierwszy wiersz: Record 000. The archive contains laboratory notes about symmetric encryption and careful handling of binary files.
+Zapisano: generated\slaby_ecb.txt
