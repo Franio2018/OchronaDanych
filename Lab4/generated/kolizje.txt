@@ -1,0 +1,9 @@
+h24 oryginału (wariant 0): 9a8fd6
+różnych h24 wśród 8192 wariantów oryginału: 8186
+
+Para kolizyjna: v_oryginał = 7282, v_zmieniony = 1761, h24 = aac6b9
+
+Warianty zmienionego z h24 równym h24 oryginału: 0 []
+  oczekiwanie: 8192 / 2^24 = 0.000488
+
+Dodatkowo — wszystkie pary kolizyjne: 3, oczekiwane 8192 * 8192 / 2^24 = 4.00

@@ -1,0 +1,18 @@
+Weryfikacja:
+  anna, Kasztan-2026 -> True (oczekiwano True) OK
+  anna, kasztan-2026 -> False (oczekiwano False) OK
+  piotr, Żółw na łące -> True (oczekiwano True) OK
+  kasia, Kasztan-2026 -> False (oczekiwano False) OK
+
+Nowe konta test1 i test2, to samo hasło, 600000 iteracji:
+  sól test1:   01e8efd63d4c5be5e2f41e3f5f4bb049
+  sól test2:   7b438306cbd0517472450bc0f0591903
+  skrót test1: f2b233ec898311f21741f5397e7ef104839467103de94116173f959436af07ad
+  skrót test2: 8abdcdf9c9e1ca88d1369e304f984c37ea4b50e08c9495e13b641743cf57e8e4
+  sole równe: False, skróty równe: False
+  weryfikuj(test1): True, weryfikuj(test2): True
+
+Dodatkowo — loginy z mniej niż 600000 iteracji: marek, zofia
+  średni czas PBKDF2, 1 iteracja:      6.41 µs
+  średni czas PBKDF2, 600000 iteracji: 605.0 ms
+  26^6 = 308915776 haseł: 1 iteracja ≈ 33.0 min, 600000 iteracji ≈ 5.9 lat

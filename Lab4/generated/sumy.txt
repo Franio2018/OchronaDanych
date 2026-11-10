@@ -1,0 +1,16 @@
+Sprawdzanie pliki-dla-studentow\SHA256SUMS.txt:
+dokumenty/budzet.csv: BŁĄD
+dokumenty/dane.bin: OK
+dokumenty/harmonogram.txt: BRAK
+dokumenty/kontakt.txt: OK
+dokumenty/regulamin.txt: OK
+
+Efekt lawinowy:
+  SHA-256('Ala ma kota.') = 9b9ae722342758f4bb6a5dd94470ddfab3c95cda15186231f53bb4666e657605
+  SHA-256('Ola ma kota.') = f7f49ccc3e7308f936f9cb71a792c3526663e9ddee89dc3e38fb83db4f308535
+  różniące się bity: 131 / 256
+
+Dodatkowo — dane.bin w kawałkach po 4096 B:
+  naraz:     64ed6afd9c6cb740d8b90d4bac77abb26365c82f24dfab3fdbce16cc50446fc3
+  kawałkami: 64ed6afd9c6cb740d8b90d4bac77abb26365c82f24dfab3fdbce16cc50446fc3
+  zgodne: True
